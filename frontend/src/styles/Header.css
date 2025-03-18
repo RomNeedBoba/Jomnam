@@ -1,0 +1,126 @@
+  /* Sticky Header with Logo and Navigation */
+  .sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px 0;
+    z-index: 1000;
+    text-align: center;
+    display: flex;
+    justify-content: space-between; /* Aligns logo and nav */
+    align-items: center;
+    padding-left: 20px; /* Add some padding to the left */
+    padding-right: 20px; /* Add some padding to the right */
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .logo-container {
+    flex-shrink: 0;
+  }
+
+  .logo {
+    height: 30px;
+    padding-left: 70px; /* Space to the left of the logo */
+  }
+
+  nav ul {
+    display: flex;
+    justify-content: flex-end;
+    gap: 40px; /* Space between the navigation items */
+    list-style: none;
+    padding: 0;
+    margin-right: 60px; /* Margin from the right */
+  }
+
+  nav ul li {
+    position: relative;
+  }
+
+  nav ul li a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #333; /* Default text color */
+    text-transform: uppercase;
+    position: relative;
+    padding: 5px 0;
+    transition: color 0.3s ease-in-out; /* Smooth color transition */
+  }
+
+  /* Overline and underline effect */
+  nav ul li a::before,
+  nav ul li a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #12284d; /* Underline and overline color */
+    transform: scaleX(0); /* Initial state for both overline and underline */
+    transition: transform 0.3s ease-in-out; /* Smooth transform for the underline/overline effect */
+  }
+
+  nav ul li a::before {
+    top: -5px; /* Overline position */
+  }
+
+  nav ul li a::after {
+    bottom: -5px; /* Underline position */
+  }
+
+  /* Active & Hover effects */
+  nav ul li a.active,
+  nav ul li a:hover {
+    color: #12284d; /* Color change on active or hover */
+  }
+
+  nav ul li a.active::before,
+  nav ul li a.active::after,
+  nav ul li a:hover::before,
+  nav ul li a:hover::after {
+    transform: scaleX(1); /* Display the underline/overline */
+  }
+
+  /* GitHub Section */
+  .github-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .github-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+  }
+
+  .github-logo {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    border-radius: 50%; /* Ensures the logo is circular */
+    object-fit: cover; /* Ensures the logo scales properly without stretching */
+  }
+
+  .separator {
+    font-size: 20px;
+    color: #333;
+  }
+
+  .get-started-button {
+    margin-right: 40px;
+    padding: 10px 20px;
+    background-color: #12284d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .get-started-button:hover {
+    background-color: #0d1f34;
+  }

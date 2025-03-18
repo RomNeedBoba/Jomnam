@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2</title>
+    <link rel="stylesheet" href="styless.css">
+<style>
+  #line-horizontal, #line-vertical {
+    position: absolute;
+    background-color: black;
+    z-index: 9999;
+  }
+  #line-horizontal {
+    width: 100%;
+    height: 1px;
+  }
+  #line-vertical {
+    width: 1px;
+    height: 100%;
+  }
+</style>
+</head>
+
+<body>
+
+    <header class="header">
+        <!-- Logo -->
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+        </div>
+  <!-- Horizton and Vertical -->
+  <div id="line-horizontal"></div>
+  <div id="line-vertical"></div>
+  <script>
+  document.addEventListener('mousemove', function(event) {
+    const verticalLine = document.getElementById('line-vertical');
+    const horizontalLine = document.getElementById('line-horizontal');
+    
+    // Set the position of the vertical line
+    verticalLine.style.left = `${event.clientX}px`;
+    
+    // Set the position of the horizontal line
+    horizontalLine.style.top = `${event.clientY}px`;
+});
+    </script>
+        <!-- Title and Menu in a Column -->
+        <div class="title-menu-container">
+            <div class="title" id="projectTitle">Untitled Project</div>
+
+            <nav class="menu">
+                <div class="menu-item">File
+                    <ul class="dropdown">
+                        <li>
+                            Open From
+                            <span class="chevron">→</span> <!-- Chevron on the right -->
+                            <ul class="nested-dropdown">
+                                <li>Google Drive...</li>
+                                <li>One Drive...</li>
+                                <li>Local Drive...</li>
+                            </ul>
+                        </li>
+                        <hr>
+                        <li onclick="project_save_with_confirm()" title="Save this VIA project (as a JSON file)">Save</li>
+                        <li>Save as...</li>
+                    </ul>
+                </div>
+                <div class="menu-item">Annotation
+                    <ul class="dropdown">
+                        <li>Export
+                            <span class="chevron">→</span> <!-- Chevron on the right -->
+                            <ul class="nested-dropdown">
+                                <li onclick="download_all_region_data('json')" title="Export annotaitons to a JSON file">Export as json</li>
+                                <li onclick="download_all_region_data('csv')" title="Export annotations to a CSV file">Export as CSV</li>
+                                <li onclick="download_all_region_data('coco', 'json')" title="Export annotaitons to COCO (http://cocodataset.org) format">Export as COCO</li>
+                            </ul>
+                        </li>
+                        <li>Import
+                            <span class="chevron">→</span> <!-- Chevron on the right -->
+                            <ul class="nested-dropdown">
+                                <li onclick="sel_local_data_file('annotations')" title="Import annotations from a JSON file">Import from json</li>
+                                <li onclick="sel_local_data_file('annotations')" title="Import annotations from a CSV file">Import from CSV</li>
+                                <li onclick="sel_local_data_file('annotations_coco')" title="Import annotations from a COCO (http://cocodataset.org) formatted JSON file">Import as COCO</li>
+                            </ul>
+                        </li>
+                        <hr>
+                        <li onclick="show_annotation_data()" title="Show a preview of annotations (opens in a new browser windows)">Preview Annotation</li>
+                    </ul>
+                </div>
+                <div class="menu-item">View
+                    <ul class="dropdown">
+                        <li onclick="image_grid_toggle()" title="Toggle between single image view and image grid view">Toggle Image Grid View</li>
+                        <li onclick="leftsidebar_toggle()" title="Show or hide the sidebar shown in left hand side">Toggle Left Sidebar</li>
+                        <li onclick="toggle_img_fn_list_visibility()" title="Show or hide a panel to update annotations corresponding to file and region">Toggle Image Filename List</li>
+                        <li class="submenu_divider"></li>
+                        <li onclick="toggle_attributes_editor()" title="Show or hide a panel to update file and region attributes">Toggle Attributes Editor</li>
+                        <li onclick="annotation_editor_toggle_all_regions_editor()" title="Show or hide a panel to update annotations corresponding to file and region">Toggle Annotation Editor</li>
+                        <li class="submenu_divider"></li>
+                        <li onclick="toggle_region_boundary_visibility()" title="Show or hide the region boundaries">Show/Hide Region Boundaries</li>
+                        <li onclick="toggle_region_id_visibility()" title="Show or hide the region id labels">Show/Hide Region Labels </li>
+                        <li onclick="toggle_region_info_visibility()" title="Show or hide the image coordinates">Show/Hide Region Info</li>
+                    </ul>
+                </div>
+                <div class="menu-item">Help
+                    <ul class="dropdown">
+                        <li>Documentation</li>
+                        <li>About</li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <div class="toolbar">
+        <button class="icon-buttonnn">
+            <img src="hand-svgrepo-com.svg" alt="Trash Icon" width="24" height="24">
+            <span class="tooltip">Hand (H)</span>
+        </button>
+        <button class="icon-buttonnn">
+            <img src="bounding-box-circles-svgrepo-com.svg" onclick="select_region_shape(rect)" alt="Trash Icon"
+                width="24" height="24">
+            <span class="tooltip">Bounding Box (B)</span>
+
+        </button>
+        <button class="icon-buttonnn">
+            <img src="polygon-pt-svgrepo-com.svg" alt="Trash Icon" width="24" height="24">
+            <span class="tooltip">Polygon (P)</span>
+
+        </button>
+
+        <span class="separator">|</span>
+
+        <button class="icon-buttonnn">
+            <img src="ai-mi-algorithm-svgrepo-com.svg" alt="Trash Icon" width="24" height="24">
+            <span class="tooltip">Automated Annotation (A)</span>
+
+        </button>
+
+        <button class="icon-buttonnn">
+            <img src="repeat-svgrepo-com.svg" alt="Trash Icon" width="24" height="24">
+            <span class="tooltip">Repeat Shape (R)</span>
+        </button>
+
+        <span class="separator">|</span>
+
+        <button class="icon-buttonnn">
+            <img src="trash-can-outline-svgrepo-com.svg" alt="Trash Icon" width="24" height="24">
+            <span class="tooltip">Delete Current Images (Delete)</span>
+        </button>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const buttons = documennnt.querySelectorAll('.icon-button');
+                buttons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        buttons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                    });
+                });
+            });
+        </script>
+        <script>
+            // Select all image elements inside .toolbar
+            const images = document.querySelectorAll('.toolbar img');
+
+            // Disable drag for each image
+            images.forEach(image => {
+                image.setAttribute('draggable', 'false');
+                image.addEventListener('dragstart', (e) => {
+                    e.preventDefault(); // Prevent default drag behavior
+                });
+            });
+        </script>
+    </div>
+    
+    <script src="scriptt.js"></script>
+    <script>
+        function select_region_shape(sel_shape_name) {
+            for (var shape_name in VIA_REGION_SHAPE) {
+                var ui_element = document.getElementById('region_shape_' + VIA_REGION_SHAPE[shape_name]);
+                ui_element.classList.remove('selected');
+            }
+
+            _via_current_shape = sel_shape_name;
+            var ui_element = document.getElementById('region_shape_' + _via_current_shape);
+            ui_element.classList.add('selected');
+
+            switch (_via_current_shape) {
+                case VIA_REGION_SHAPE.RECT: // Fall-through
+                case VIA_REGION_SHAPE.CIRCLE: // Fall-through
+                case VIA_REGION_SHAPE.ELLIPSE:
+                    show_message('Press single click and drag mouse to draw ' +
+                        _via_current_shape + ' region');
+                    break;
+
+                case VIA_REGION_SHAPE.POLYLINE:
+                case VIA_REGION_SHAPE.POLYGON:
+                    _via_is_user_drawing_polygon = false;
+                    _via_current_polygon_region_id = -1;
+
+                    show_message('[Single Click] to define polygon/polyline vertices, ' +
+                        '[Backspace] to delete last vertex, [Enter] to finish, [Esc] to cancel drawing.');
+                    break;
+
+                case VIA_REGION_SHAPE.POINT:
+                    show_message('Press single click to define points (or landmarks)');
+                    break;
+
+                default:
+                    show_message('Unknown shape selected!');
+                    break;
+            }
+        }
+
+    </script>
+    <script>
+        // transform regions in image space to canvas space
+        function _via_load_canvas_regions() {
+            _via_regions_group_color_init();
+
+            // load all existing annotations into _via_canvas_regions
+            var regions = _via_img_metadata[_via_image_id].regions;
+            _via_canvas_regions = [];
+            for (var i = 0; i < regions.length; ++i) {
+                var region_i = new file_region();
+                for (var key in regions[i].shape_attributes) {
+                    region_i.shape_attributes[key] = regions[i].shape_attributes[key];
+                }
+                _via_canvas_regions.push(region_i);
+
+                switch (_via_canvas_regions[i].shape_attributes['name']) {
+                    case VIA_REGION_SHAPE.RECT:
+                        var x = regions[i].shape_attributes['x'] / _via_canvas_scale;
+                        var y = regions[i].shape_attributes['y'] / _via_canvas_scale;
+                        var width = regions[i].shape_attributes['width'] / _via_canvas_scale;
+                        var height = regions[i].shape_attributes['height'] / _via_canvas_scale;
+
+                        _via_canvas_regions[i].shape_attributes['x'] = Math.round(x);
+                        _via_canvas_regions[i].shape_attributes['y'] = Math.round(y);
+                        _via_canvas_regions[i].shape_attributes['width'] = Math.round(width);
+                        _via_canvas_regions[i].shape_attributes['height'] = Math.round(height);
+                        break;
+
+                    case VIA_REGION_SHAPE.CIRCLE:
+                        var cx = regions[i].shape_attributes['cx'] / _via_canvas_scale;
+                        var cy = regions[i].shape_attributes['cy'] / _via_canvas_scale;
+                        var r = regions[i].shape_attributes['r'] / _via_canvas_scale;
+                        _via_canvas_regions[i].shape_attributes['cx'] = Math.round(cx);
+                        _via_canvas_regions[i].shape_attributes['cy'] = Math.round(cy);
+                        _via_canvas_regions[i].shape_attributes['r'] = Math.round(r);
+                        break;
+
+                    case VIA_REGION_SHAPE.ELLIPSE:
+                        var cx = regions[i].shape_attributes['cx'] / _via_canvas_scale;
+                        var cy = regions[i].shape_attributes['cy'] / _via_canvas_scale;
+                        var rx = regions[i].shape_attributes['rx'] / _via_canvas_scale;
+                        var ry = regions[i].shape_attributes['ry'] / _via_canvas_scale;
+                        // rotation in radians
+                        var theta = regions[i].shape_attributes['theta'];
+                        _via_canvas_regions[i].shape_attributes['cx'] = Math.round(cx);
+                        _via_canvas_regions[i].shape_attributes['cy'] = Math.round(cy);
+                        _via_canvas_regions[i].shape_attributes['rx'] = Math.round(rx);
+                        _via_canvas_regions[i].shape_attributes['ry'] = Math.round(ry);
+                        _via_canvas_regions[i].shape_attributes['theta'] = theta;
+                        break;
+
+                    case VIA_REGION_SHAPE.POLYLINE: // handled by polygon
+                    case VIA_REGION_SHAPE.POLYGON:
+                        var all_points_x = regions[i].shape_attributes['all_points_x'].slice(0);
+                        var all_points_y = regions[i].shape_attributes['all_points_y'].slice(0);
+                        for (var j = 0; j < all_points_x.length; ++j) {
+                            all_points_x[j] = Math.round(all_points_x[j] / _via_canvas_scale);
+                            all_points_y[j] = Math.round(all_points_y[j] / _via_canvas_scale);
+                        }
+                        _via_canvas_regions[i].shape_attributes['all_points_x'] = all_points_x;
+                        _via_canvas_regions[i].shape_attributes['all_points_y'] = all_points_y;
+                        break;
+
+                    case VIA_REGION_SHAPE.POINT:
+                        var cx = regions[i].shape_attributes['cx'] / _via_canvas_scale;
+                        var cy = regions[i].shape_attributes['cy'] / _via_canvas_scale;
+
+                        _via_canvas_regions[i].shape_attributes['cx'] = Math.round(cx);
+                        _via_canvas_regions[i].shape_attributes['cy'] = Math.round(cy);
+                        break;
+                }
+            }
+        }</script>
+</body>
+
+</html>
