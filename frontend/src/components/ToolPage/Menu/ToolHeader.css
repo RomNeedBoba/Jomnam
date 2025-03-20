@@ -1,0 +1,135 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    position: fixed; /* Fix the header at the top */
+    top: 0; /* Align it to the top */
+    left: 0; /* Align it to the left */
+    width: 100%; /* Make it span the full width */
+    display: flex;
+    align-items: center;
+    background: #1D1616;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: #FDFAF6; 
+    z-index: 1000; /* Ensure it stays above other elements */
+}
+
+
+.logo img {
+    width: 160px;
+    height: 40px;
+}
+
+/* New container to wrap title and menu in a column */
+.title-menu-container {
+    display: flex;
+    flex-direction: column; /* Stack title & menu vertically */
+    align-items: flex-start;
+    padding-left: 20px; 
+    flex: 1;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px; /* Space between title & menu */
+}
+.menu {
+    display: flex;
+    gap: 20px;
+}
+
+.menu-item {
+    position: relative;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px; /* Rounded corners */
+}
+
+.menu-item:hover {
+    background: #f1f1f1; /* Slightly darker light grey on hover */
+    border-color: #c0c0c0; /* Darker grey border on hover */
+}
+
+.menu-item:hover .dropdown {
+    display: block;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #18230F; /* White background */
+    list-style: none;
+    border: 1px solid #dcdcdc; /* Light grey border */
+    width: 200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    border-radius: 5px; /* Rounded corners */
+
+}
+
+.dropdown li {
+    padding: 8px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.3s; /* Smooth transition */
+}
+
+.dropdown li:hover {
+    background: #f1f1f1; /* Slightly darker light grey on hover */
+}
+
+.nested-dropdown {
+    display: none; /* Hide nested dropdown by default */
+    position: absolute;
+    left: 100%; /* Position it to the right of the parent */
+    top: 0; /* Align with the top of the parent */
+    background-color: #ffffff; /* White background */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    transform: translateX(-1px); /* Adjust alignment */
+    z-index: 1;
+    border-radius: 5px; /* Rounded corners */
+    border: 1px solid #dcdcdc; /* Light grey border */
+}
+
+.dropdown li:hover .nested-dropdown {
+    display: block; /* Show nested dropdown on hover */
+}
+
+.nested-dropdown li {
+    padding: 10px;
+    cursor: pointer;
+    width: 100%; /* Make the nested items full width */
+    box-sizing: border-box; /* Include padding in width calculation */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+    transition: background 0.3s; /* Smooth transition */
+}
+
+.nested-dropdown li:hover {
+    background-color: #f1f1f1; /* Slightly darker light grey on hover */
+}
+
+/* Chevron styles */
+.chevron {
+    font-size: 0.8em; /* Smaller size for the chevron */
+    margin-left: 5px; /* Space between text and chevron */
+    float: right; /* Align to the right */
+    transition: transform 0.2s; /* Smooth transition for hover effect */
+}
+
+.dropdown li:hover .chevron {
+    transform: rotate(90deg); /* Rotate chevron on hover */
+}

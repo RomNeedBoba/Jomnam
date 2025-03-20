@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/Header.css';
-import image from '../assets/logo.png';
-import githubLogo from '../assets/github-logo.png'; 
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import './Header.css';
+import image from '../../../assets/logo.png';
+import githubLogo from '../../../assets/github-logo.png'; 
 
 const Header = ({ scrollToSection, activeSection }) => {
+  const navigate = useNavigate(); // Initialize navigate
   const sections = ["home", "demos", "STR", "about"];
 
   const handleClick = (section) => {
@@ -23,8 +25,8 @@ const Header = ({ scrollToSection, activeSection }) => {
                 href={`#${item}`}
                 className={activeSection === item ? "active" : ""}
                 onClick={(e) => {
-                  e.preventDefault(); 
-                  handleClick(item); 
+                  e.preventDefault();
+                  handleClick(item);
                 }}
               >
                 {item.toUpperCase()}
@@ -46,9 +48,7 @@ const Header = ({ scrollToSection, activeSection }) => {
         <span className="separator">|</span>
         <button
           className="get-started-button"
-          onClick={() => {
-            window.location.href = 'hey.html';
-          }}
+          onClick={() => navigate('/tool')} 
         >
           Get Started
         </button>
