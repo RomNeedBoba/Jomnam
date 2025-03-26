@@ -31,6 +31,11 @@ const Header = () => {
 
   return (
     <header className="header">
+      {/* Logo */}
+      <div className="logo">
+        <img src="/src/assets/py.png" alt="Logo" className="logo-img" />
+      </div>
+
       <div className="title-menu-container">
         <div className="title" id="projectTitle" onClick={handleTitleClick}>
           {projectTitle}
@@ -105,4 +110,3 @@ const Header = () => {
 }
 
 export default Header;
-
