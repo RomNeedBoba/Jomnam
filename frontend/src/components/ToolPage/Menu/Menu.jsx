@@ -33,7 +33,7 @@ const Header = () => {
     <header className="header">
       {/* Logo */}
       <div className="logo">
-        <img src="/src/assets/py.png" alt="Logo" className="logo-img" />
+        <img src="/src/assets/golo.png" alt="Logo" className="logo-img" />
       </div>
 
       <div className="title-menu-container">

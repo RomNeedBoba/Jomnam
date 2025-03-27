@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Popup from '../components/popup/database/database'; 
 import Header from "../components/ToolPage/Menu/Menu";
-import Body from "../components/ToolPage/Body/Body"
 
 const Tool = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -16,8 +15,6 @@ const Tool = () => {
   return (
     <div className="app">
       <Header />
-      <Body />
-
       {/* Show popup if state is true */}
       {showPopup && <Popup closePopup={closePopup} />}
     </div>

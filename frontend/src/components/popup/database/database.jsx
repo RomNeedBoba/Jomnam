@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import GoogleDrive from '../../../service/googleDriveAPI';
 import './db.css';
 
-const Popup = () => {
+const Popup = ({ closePopup }) => {
   const [popupVisible, setPopupVisible] = useState(true);
+  const [showGoogleDrive, setShowGoogleDrive] = useState(false);
 
   useEffect(() => {
     const wrapper = document.getElementById('content-wrapper');
@@ -17,12 +19,13 @@ const Popup = () => {
     };
   }, [popupVisible]);
 
-  const closePopup = () => {
+  const closeLocalPopup = () => {
     setPopupVisible(false);
+    closePopup();
   };
 
   const selectGoogleDrive = () => {
-    alert("Google Drive integration coming soon!");
+    setShowGoogleDrive(true);
   };
 
   const selectOneDrive = () => {
@@ -49,7 +52,7 @@ const Popup = () => {
       {/* Wrapper for the entire page */}
       <div id="content-wrapper"></div>
 
-      {popupVisible && (
+      {popupVisible && !showGoogleDrive && (
         <div className="popup-overlay">
           <div className="popup-box">
             <h2>Save Images By</h2>
@@ -69,10 +72,12 @@ const Popup = () => {
               </div>
             </div>
             <div className="underline"></div>
-            <span onClick={closePopup} className="decide-later">Decide Later</span>
+            <span onClick={closeLocalPopup} className="decide-later">Decide Later</span>
           </div>
         </div>
       )}
+
+      {showGoogleDrive && <GoogleDrive />}
     </>
   );
 };

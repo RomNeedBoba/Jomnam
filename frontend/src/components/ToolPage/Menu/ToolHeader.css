@@ -25,11 +25,12 @@ body {
 .logo {
     margin-right: auto; /* Push the logo to the left */
     margin-left: -60px; /* Reduce the margin to move it closer to the edge */
+    margin-bottom: 20px;
 }
 
 .logo img {
-    width: 80px;
-    height: 40px;
+    width: 50px;
+    height:40px;
 }
 
 /* New container to wrap title and menu in a column */
