@@ -3,7 +3,6 @@ import './Content.css';
 import myVideo from '../../../assets/s.mp4';
 import Header from '../Header/Header';
 import githubLogo from '../../../assets/github-logo.png';
-// import discordLogo from '../assets/discord-logo.png';  
 import p1 from '../../../assets/p1.png';
 import p2 from '../../../assets/p2.png';
 import p3 from '../../../assets/p3.png';
