@@ -45,6 +45,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden; /* Ensure no overflow */
+}
+
+.image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure the image covers the container */
 }
 
 .khmer-image {
@@ -594,11 +601,12 @@ h1 {
 .core-team-card h4 {
     font-size: 1.2em;
     margin: 5px 0;
+    color: #000000;
 }
 
 .core-team-card p {
     font-size: 0.9em;
-    color: #555;
+    color: #000000;
     line-height: 1.4;
 }
 
@@ -651,6 +659,70 @@ h1 {
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+.contributor-preview-container {
+    margin-top: 30px;
+}
+
+.contributor-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: space-between;
+}
+
+.contributor-preview-images {
+    display: flex;
+    gap: 8px;
+}
+
+.contributor-preview-images img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+}
+
+.contributor-preview-text h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+}
+
+.contributor-dropdown-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.contributor-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.contributor-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.contributor-image-container img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.contributor-info h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #000000;
+}
 
 /* Responsive Design */
 @media (max-width: 1024px) {
@@ -684,3 +756,4 @@ h1 {
         max-height: none;
     }
 }
+

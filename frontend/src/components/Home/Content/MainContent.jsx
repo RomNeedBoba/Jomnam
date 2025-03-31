@@ -1,27 +1,37 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Content.css';
+import main from '../../../assets/main.png';
 import myVideo from '../../../assets/s.mp4';
 import Header from '../Header/Header';
-import githubLogo from '../../../assets/github-logo.png';
 import p1 from '../../../assets/p1.png';
 import p2 from '../../../assets/p2.png';
 import p3 from '../../../assets/p3.png';
-import leaderProfile from '../../../assets/leaderProfile.png';
 import c1 from '../../../assets/c1.png';
 import c2 from '../../../assets/c2.png';
 import c3 from '../../../assets/c3.png';
-import c4 from '../../../assets/c4.png';
-import c5 from '../../../assets/c5.png';
-import c6 from '../../../assets/c6.png';
 import mission from '../../../assets/mission.png';
 import vision from '../../../assets/vission.png';
 import card1 from '../../../assets/card1.png';
 import card2 from '../../../assets/card2.png';
 import telelgram from '../../../assets/telegram.png';
 import strimage from '../../../assets/strimage.png';
+import sreng from '../../../assets/sreng.png';
+import rany from '../../../assets/rany.png';
+import sol from '../../../assets/sol.png';
+import ra from '../../../assets/ra.png';
+import dara from '../../../assets/dara.png';
+import rom from '../../../assets/rom.png';
+import aug from '../../../assets/aug.png';
+import x1 from '../../../assets/x1.png';
+import x2 from '../../../assets/x2.png';
+import x3 from '../../../assets/x3.png';
+import x4 from '../../../assets/x4.png';
+import x5 from '../../../assets/x5.png';
+import x6 from '../../../assets/x6.png';
 
 const KhmerTextGlobalReach = () => {
     const [activeSection, setActiveSection] = useState("home");
+    const [showContributors, setShowContributors] = useState(false);
 
     const sectionRefs = {
         home: useRef(null),
@@ -74,7 +84,7 @@ const KhmerTextGlobalReach = () => {
                 </div>
                 <div className="right-content">
                     <div className="image-placeholder">
-                        <img src="/capstoneImageI.jpg" alt="Capstone" className="khmer-image" />
+                        <img src={main} alt="Capstone" className="khmer-image" />
                     </div>
                 </div>
             </section>
@@ -188,16 +198,16 @@ const KhmerTextGlobalReach = () => {
                         <div className="core-team-grid">
                             <div className="core-team-card">
                                 <div className="core-team-image-container">
-                                    <img src={c1} alt="Profile 1" />
+                                    <img src={rom} alt="Profile 1" />
                                 </div>
                                 <div>
                                     <h4>Rin Pichphyrom</h4>
-                                    <p>Project Lead</p>
+                                    <p>Fullstack Dev</p>
                                 </div>
                             </div>
                             <div className="core-team-card">
                                 <div className="core-team-image-container">
-                                    <img src={c1} alt="Profile 2" />
+                                    <img src={sreng} alt="Profile 2" />
                                 </div>
                                 <div>
                                     <h4>Srean leangsreng</h4>
@@ -206,7 +216,7 @@ const KhmerTextGlobalReach = () => {
                             </div>
                             <div className="core-team-card">
                                 <div className="core-team-image-container">
-                                    <img src={c1} alt="Profile 3" />
+                                    <img src={dara} alt="Profile 3" />
                                 </div>
                                 <div>
                                     <h4>Sovan Chanara</h4>
@@ -215,7 +225,7 @@ const KhmerTextGlobalReach = () => {
                             </div>
                             <div className="core-team-card">
                                 <div className="core-team-image-container">
-                                    <img src={c1} alt="Profile 4" />
+                                    <img src={rany} alt="Profile 4" />
                                 </div>
                                 <div>
                                     <h4>Non Sorany</h4>
@@ -224,7 +234,7 @@ const KhmerTextGlobalReach = () => {
                             </div>
                             <div className="core-team-card">
                                 <div className="core-team-image-container">
-                                    <img src={c1} alt="Profile 5" />
+                                    <img src={ra} alt="Profile 5" />
                                 </div>
                                 <div>
                                     <h4>Seng Sovathara</h4>
@@ -233,7 +243,7 @@ const KhmerTextGlobalReach = () => {
                             </div>
                             <div className="core-team-card">
                                 <div className="core-team-image-container">
-                                    <img src={c1} alt="Profile 6" />
+                                    <img src={sol} alt="Profile 6" />
                                 </div>
                                 <div>
                                     <h4>Seng Kosal</h4>
@@ -241,6 +251,86 @@ const KhmerTextGlobalReach = () => {
                                 </div>
                             </div>
                         </div>
+                        <div className="contributor-preview-container">
+                            <div className="contributor-preview-header">
+                                <div className="contributor-preview-images">
+                                    <img src={x4} alt="Contributor 1" />
+                                    <img src={x5} alt="Contributor 2" />
+                                    <img src={x6} alt="Contributor 3" />
+                                </div>
+                                <div className="contributor-preview-text">
+                                    <h4>Other Contributors</h4>
+                                </div>
+                                <button
+                                    className="contributor-dropdown-button"
+                                    onClick={() => setShowContributors(prev => !prev)}
+                                >
+                                    {showContributors ? '▲' : '▼'}
+                                </button>
+                            </div>
+
+                            {showContributors && (
+                                <div className="contributor-grid">
+                                    <div className="contributor-card">
+                                        <div className="contributor-image-container">
+                                            <img src={aug} alt="Contributor 1" />
+                                        </div>
+                                        <div className="contributor-info">
+                                            <h4>Hoy Seiha</h4>
+                                        </div>
+                                    </div>
+                                    <div className="contributor-card">
+                                        <div className="contributor-image-container">
+                                            <img src={x1} alt="Contributor 2" />
+                                        </div>
+                                        <div className="contributor-info">
+                                            <h4>Pov Phearum</h4>
+                                        </div>
+                                    </div>
+                                    <div className="contributor-card">
+                                        <div className="contributor-image-container">
+                                            <img src={x2} alt="Contributor 3" />
+                                        </div>
+                                        <div className="contributor-info">
+                                            <h4>NEANG ROTHMNY</h4>
+                                        </div>
+                                    </div>
+                                    <div className="contributor-card">
+                                        <div className="contributor-image-container">
+                                            <img src={x3} alt="Contributor 4" />
+                                        </div>
+                                        <div className="contributor-info">
+                                            <h4>GNEP VANDARA</h4>
+                                        </div>
+                                    </div>
+                                    <div className="contributor-card">
+                                        <div className="contributor-image-container">
+                                            <img src={x6} alt="Contributor 4" />
+                                        </div>
+                                        <div className="contributor-info">
+                                            <h4>Sin Panharong</h4>
+                                        </div>
+                                    </div>
+                                    <div className="contributor-card">
+                                        <div className="contributor-image-container">
+                                            <img src={x5} alt="Contributor 4" />
+                                        </div>
+                                        <div className="contributor-info">
+                                            <h4>Sambo Sopheakline</h4>
+                                        </div>
+                                    </div>
+                                    <div className="contributor-card">
+                                        <div className="contributor-image-container">
+                                            <img src={x4} alt="Contributor 4" />
+                                        </div>
+                                        <div className="contributor-info">
+                                            <h4>Poch Sreypov</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
                     </div>
 
                 </div>
