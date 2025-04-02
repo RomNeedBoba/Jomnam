@@ -1,0 +1,151 @@
+.annotation-body {
+    display: flex;
+    height: calc(100vh - 60px); /* assuming header is 60px */
+  }
+  
+  .tool-section {
+    width: 30%;
+    background: #f4f4f4;
+    padding: 16px;
+    overflow-y: auto;
+    border-right: 1px solid #ddd;
+  }
+  
+  .workspace-section {
+    width: 70%;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+  }
+  
+  .annotation-image {
+    max-width: 100%;
+    max-height: 90%;
+    object-fit: contain;
+  }
+  
+
+
+
+
+  .class-manager {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 0;  /* Removed rounding to connect flush */
+    font-family: Arial, sans-serif;
+  }
+  
+  .class-header {
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    background-color: #1E3E62;
+    color: white;
+    box-sizing: border-box;
+  }
+  .class-header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .class-list {
+    padding: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .class-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .class-item:last-child {
+    border-bottom: none;
+  }
+  .class-item-placeholder {
+    color: #888;
+    text-align: center;
+    padding: 8px;
+  }
+  
+  .action-buttons {
+    padding: 8px;
+    display: flex;
+    gap: 10px;
+  }
+  .add-button,
+  .modify-button {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .add-button {
+    background-color: #1E3E62;
+    color: white;
+  }
+  .modify-button {
+    background-color: #ccc;
+    color: #333;
+  }
+  
+  /* Modal styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  .modal-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  .modal-footer {
+    margin-top: 12px;
+    text-align: right;
+  }
+  .save-button {
+    padding: 8px 16px;
+    background-color: #1E3E62;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }

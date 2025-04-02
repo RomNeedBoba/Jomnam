@@ -99,4 +99,37 @@
   .decide-later:hover {
     color: rgb(84, 84, 88);
   }
+  .popup-success {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    z-index: 1000;
+    padding: 14px 20px;
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    animation: fadeInOut 3s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    max-width: 300px;
+  }
+  
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    10% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
   

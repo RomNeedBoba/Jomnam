@@ -1,0 +1,70 @@
+.region-toolbar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f9f9f9;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    padding: 12px 16px;
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+}
+
+.icon-button {
+    background: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    position: relative;
+}
+
+.icon-button:hover {
+    background: #f0f0f0;
+    transform: scale(1.05);
+}
+
+.icon-button.active {
+    background-color: #d0e7ff;
+    /* Light blue background for selected tool */
+    box-shadow: 0 0 0 2px #1e3e62;
+    /* Optional outline effect */
+}
+
+.icon-button img {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
+.tooltip {
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.2s;
+    pointer-events: none;
+}
+
+.icon-button:hover .tooltip {
+    opacity: 1;
+    transform: translateY(-4px);
+}
+
+.separator {
+    font-weight: bold;
+    color: #b0b0b0;
+    margin: 0 12px;
+}

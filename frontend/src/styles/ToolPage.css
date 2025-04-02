@@ -1,0 +1,23 @@
+.warning-toast {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 14px 20px;
+    border: 1px solid #ffeeba;
+    border-radius: 8px;
+    font-size: 15px;
+    z-index: 3000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    animation: fadeInOut 9s ease-in-out;
+    max-width: 360px;
+  }
+  
+  @keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-10px); }
+  }
+  

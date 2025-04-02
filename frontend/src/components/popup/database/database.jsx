@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import GoogleDrive from '../../../service/googleDriveAPI';
 import './db.css';
 
-const Popup = ({ closePopup }) => {
+const Popup = ({ closePopup, onAddImages }) => {
   const [popupVisible, setPopupVisible] = useState(true);
   const [showGoogleDrive, setShowGoogleDrive] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastText, setToastText] = useState('');
 
   useEffect(() => {
     const wrapper = document.getElementById('content-wrapper');
@@ -33,24 +35,40 @@ const Popup = ({ closePopup }) => {
   };
 
   const selectLocalDrive = () => {
-    let input = document.createElement("input");
+    const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
+    input.multiple = true;
+    input.webkitdirectory = true;
+  
     input.onchange = (e) => {
-      let file = e.target.files[0];
-      if (file) {
-        let url = URL.createObjectURL(file);
-        alert("Image uploaded: " + file.name);
-        console.log("Image URL:", url);
+      const files = Array.from(e.target.files);
+      const imageFiles = files.filter(file => file.type.startsWith("image/"));
+  
+      if (imageFiles.length > 0) {
+        onAddImages(imageFiles);
+  
+        setToastText(`✅ ${imageFiles.length} image(s) loaded`);
+        setShowToast(true);
+        
+        setTimeout(() => {
+          setShowToast(false);
+          closeLocalPopup(); // ✅ Close AFTER the toast is done
+        }, 500);
       }
     };
+  
     input.click();
   };
 
   return (
     <>
-      {/* Wrapper for the entire page */}
       <div id="content-wrapper"></div>
+
+      {/* ✅ Toast message */}
+      {showToast && (
+        <div className="popup-success">{toastText}</div>
+      )}
 
       {popupVisible && !showGoogleDrive && (
         <div className="popup-overlay">

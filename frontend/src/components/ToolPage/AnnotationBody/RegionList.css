@@ -1,0 +1,75 @@
+.overlay-editor {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    padding: 14px 16px;
+    z-index: 3000;
+    min-width: 220px;
+    max-width: 280px;
+  }
+  
+  .overlay-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #5c2da8;
+  }
+  
+  .overlay-input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .overlay-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  
+  .save-btn {
+    background-color: #6a1b9a;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    border: 1px solid #6a1b9a;
+    cursor: pointer;
+  }
+  
+  .delete-btn {
+    background-color: #ff5252;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .region-list-scroll {
+    margin-top: 12px;
+    max-height: 100px;
+    overflow-y: auto;
+    border-top: 1px solid #eee;
+    padding-top: 6px;
+  }
+  
+  .region-item {
+    padding: 4px 6px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  
+  .region-item.active {
+    background-color: #ece6ff;
+    font-weight: 600;
+    border-radius: 4px;
+  }
+  
