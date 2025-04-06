@@ -1,9 +1,9 @@
-// === AnnotationBody.jsx ===
 import React, { useState, useRef } from 'react';
 import ImageSelector from './ImageSelector';
 import ClassManager from './ClassManager';
 import RegionToolbar from './tool';
 import RectangleDrawer from './RectangleDrawer';
+import PolygonDrawer from './PolygonDrawer';
 import RegionList from './RegionList';
 import './AnnotationBody.css';
 
@@ -19,11 +19,16 @@ const AnnotationBody = ({
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
-  const [activeTool, setActiveTool] = useState(null);
+  const [activeTool, setActiveTool] = useState(null);  // Tool to draw (rectangle, polygon)
   const [selectedClass, setSelectedClass] = useState(null);
-  const [regions, setRegions] = useState([]);
+  const [regions, setRegions] = useState({});  // Stores regions per image file (imageName -> regions)
 
   const imageRef = useRef(null);
+
+  // Helper function to get the regions for the current selected image
+  const getRegionsForCurrentImage = () => {
+    return regions[selectedImage?.name] || [];
+  };
 
   const handleMouseMove = (e) => {
     const bounds = e.currentTarget.getBoundingClientRect();
@@ -69,6 +74,7 @@ const AnnotationBody = ({
     setActiveTool(tool);
   };
 
+  // Add region logic
   const handleAddRegion = (vggFormatText) => {
     if (!selectedClass) {
       alert("Please select a class before labeling.");
@@ -76,14 +82,24 @@ const AnnotationBody = ({
     }
 
     const newRegion = {
-      id: Date.now(),
-      class: selectedClass,
-      shape: 'rect',
-      data: vggFormatText,
-      imageName: selectedImage.name,
+      region_id: Date.now(),  // Unique ID for each region
+      shape_attributes: vggFormatText.shape_attributes,
+      region_attributes: {
+        class: selectedClass,
+        description: vggFormatText.description || '',
+      },
+      imageName: selectedImage.name,  // Store regions by image name
     };
 
-    setRegions((prev) => [...prev, newRegion]);
+    // Update regions for this specific image
+    setRegions((prev) => {
+      const imageRegions = prev[selectedImage.name] || [];
+      return {
+        ...prev,
+        [selectedImage.name]: [...imageRegions, newRegion],
+      };
+    });
+
     console.log("💾 Region added:", newRegion);
   };
 
@@ -142,14 +158,27 @@ const AnnotationBody = ({
                   draggable={false}
                 />
 
+                {/* Rectangle and Polygon Drawers */}
                 {activeTool === 'rect' && (
-                  <RectangleDrawer imageRef={imageRef} onAddRegion={handleAddRegion} />
+                  <RectangleDrawer
+                    imageRef={imageRef}
+                    onAddRegion={handleAddRegion}
+                    activeTool={activeTool}
+                  />
+                )}
+
+                {activeTool === 'polygon' && (
+                  <PolygonDrawer
+                    imageRef={imageRef}
+                    onAddRegion={handleAddRegion}
+                    activeTool={activeTool}
+                  />
                 )}
               </div>
             </div>
 
             <RegionList
-              regions={regions}
+              regions={getRegionsForCurrentImage()}
               currentImage={selectedImage}
               selectedClass={selectedClass}
               onSelectClass={setSelectedClass}

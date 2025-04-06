@@ -18,10 +18,24 @@ const OverlayEditor = ({ selectedRegion, onUpdateDescription, onDelete, onSelect
     if (e.key === 'Enter') handleSave();
   };
 
+  // Only render the overlay when a region is selected
+  if (!selectedRegion) {
+    return null;  // No overlay editor shown if no region is selected
+  }
+
   return (
     <div className="overlay-editor">
-      <div className="overlay-title">Class Name: {selectedRegion?.class || 'None'}</div>
+      {/* Display Class Name */}
+      <div className="overlay-title">
+        Class Name: {selectedRegion?.class || 'None'}
+      </div>
 
+      {/* Display Region Shape only when a region is selected */}
+      <div className="overlay-shape">
+        <strong>Shape: </strong> {selectedRegion?.shape || 'Not selected'}
+      </div>
+
+      {/* Description Input */}
       <input
         className="overlay-input"
         type="text"
@@ -32,10 +46,15 @@ const OverlayEditor = ({ selectedRegion, onUpdateDescription, onDelete, onSelect
       />
 
       <div className="overlay-actions">
-        <button className="delete-btn" onClick={() => onDelete(selectedRegion?.id)}>Delete</button>
-        <button className="save-btn" onClick={handleSave}>Save (Enter)</button>
+        <button className="delete-btn" onClick={() => onDelete(selectedRegion?.id)}>
+          Delete
+        </button>
+        <button className="save-btn" onClick={handleSave}>
+          Save (Enter)
+        </button>
       </div>
 
+      {/* Region List */}
       {regionList?.length > 1 && (
         <div className="region-list-scroll">
           {regionList.map((r, i) => (

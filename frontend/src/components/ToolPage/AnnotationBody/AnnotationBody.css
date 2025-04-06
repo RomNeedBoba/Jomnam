@@ -1,8 +1,7 @@
 .annotation-body {
+  padding-top: 50px; /* must match .header height */
+  height: calc(100vh - 60px);
   display: flex;
-  width: 100%;
-  height: calc(100vh - 60px); /* Adjust if your header is different */
-  overflow: hidden;
 }
 
 /* LEFT SIDEBAR */

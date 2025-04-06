@@ -7,12 +7,13 @@ const trashIcon = (
   </svg>
 );
 
-const ClassManager = () => {
+const ClassManager = ({ regions, onRegionSelect }) => {
   const [classes, setClasses] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showModifyModal, setShowModifyModal] = useState(false);
   const [newClassInput, setNewClassInput] = useState('');
   const [toast, setToast] = useState({ visible: false, message: '', type: '' });
+  const [selectedRegion, setSelectedRegion] = useState(null);  // New state for selected region
 
   const openAddModal = () => {
     setNewClassInput('');
@@ -71,10 +72,14 @@ const ClassManager = () => {
   };
 
   const handleSaveChanges = () => {
-    // Update the class names on Save Changes
     setClasses(classes);
     showToastMessage('Changes saved successfully!', 'success');
     closeModifyModal();
+  };
+
+  const handleRegionClick = (region) => {
+    setSelectedRegion(region);  // Set the selected region
+    onRegionSelect(region);  // Pass selected region data back to parent (if needed)
   };
 
   return (
@@ -159,6 +164,15 @@ const ClassManager = () => {
               <button className="save-button" onClick={handleSaveChanges}>Save Changes</button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Display selected region's data */}
+      {selectedRegion && (
+        <div className="selected-region">
+          <h3>Selected Region: {selectedRegion.name}</h3>
+          <p>Shape: {selectedRegion.shape}</p>
+          <p>Coordinates: {JSON.stringify(selectedRegion.coordinates)}</p>
         </div>
       )}
     </div>

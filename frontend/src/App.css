@@ -1,10 +1,24 @@
-body {
+/* Assume your header is 60px tall */
+body, html, #root {
+  height: 100%;
   margin: 0;
-  font-family: Arial, sans-serif;
+  padding: 0;
 }
 
 .app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
+}
+
+.header {
+  height: 60px;
+  flex-shrink: 0;
+  z-index: 1000;
+}
+
+.annotation-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
 }

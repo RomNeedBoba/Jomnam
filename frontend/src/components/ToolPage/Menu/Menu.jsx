@@ -1,29 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import './ToolHeader.css';
 import { getDeletedImages } from '../../../utils/deletedImages';
 
-const Header = () => {
+const Header = forwardRef((props, ref) => {
   const [projectTitle, setProjectTitle] = useState('Untitled Project');
   const [showDeletedModal, setShowDeletedModal] = useState(false);
   const [deletedImages, setDeletedImages] = useState([]);
 
+  useImperativeHandle(ref, () => ({
+    updateTitleFromFolder(folderName) {
+      if (folderName && projectTitle === 'Untitled Project') {
+        setProjectTitle(folderName);
+        localStorage.setItem('projectTitle', folderName);
+      }
+    }
+  }));
+
   useEffect(() => {
     const savedTitle = localStorage.getItem("projectTitle");
     if (savedTitle) setProjectTitle(savedTitle);
-
-    const script = document.createElement("script");
-    script.src = "/script.js";
-    script.async = true;
-    script.onload = () => console.log("Script loaded!");
-    document.body.appendChild(script);
-
-    return () => console.log("Header unmounted, but script stays.");
   }, []);
 
   const handleTitleClick = () => {
     const newTitle = prompt("Enter new project title:", projectTitle);
     if (newTitle && newTitle.trim()) {
       setProjectTitle(newTitle);
+      localStorage.setItem("projectTitle", newTitle);
     }
   };
 
@@ -31,6 +33,93 @@ const Header = () => {
     const files = getDeletedImages();
     setDeletedImages(files);
     setShowDeletedModal(true);
+  };
+
+  const handlePreviewAnnotation = () => {
+    // Retrieve annotation data from localStorage
+    const annotationData = localStorage.getItem('annotationsPreview');
+    const parsed = annotationData ? JSON.parse(annotationData) : null;
+
+    if (!parsed) {
+      alert('No annotation data found.');
+      return;
+    }
+
+    // Convert annotation data to CSV-like format
+    const headers = ["filename", "file_size", "file_attributes", "region_count", "region_id", "region_shape_attributes", "region_attributes"];
+    const rows = [];
+
+    Object.keys(parsed).forEach((imageName) => {
+      const image = parsed[imageName];
+      const file_size = image.size;  // Assuming 'size' is part of the image metadata
+      const file_attributes = "{}";  // Assuming an empty object for file attributes
+      const region_count = image.regions.length;
+      
+      image.regions.forEach((region, idx) => {
+        const region_id = region.id;
+        const region_shape_attributes = JSON.stringify(region.shape_attributes);
+        const region_attributes = JSON.stringify(region.region_attributes);
+        
+        rows.push([
+          imageName,
+          file_size,
+          file_attributes,
+          region_count,
+          region_id,
+          region_shape_attributes,
+          region_attributes
+        ]);
+      });
+    });
+
+    // Open a new window with the CSV content
+    const previewWindow = window.open('', '_blank');
+    previewWindow.document.write(`
+      <html>
+        <head>
+          <title>Annotation Preview</title>
+          <style>
+            body {
+              font-family: monospace;
+              background-color: #1e1e1e;
+              color: #dcdcdc;
+              padding: 20px;
+              white-space: pre-wrap;
+              overflow-x: auto;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              padding: 8px;
+              border: 1px solid #444;
+              text-align: left;
+            }
+          </style>
+        </head>
+        <body>
+          <h2>📄 Annotation Preview</h2>
+          <table>
+            <thead>
+              <tr>
+                ${headers.map((header) => `<th>${header}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map((row) => {
+                return `
+                  <tr>
+                    ${row.map((cell) => `<td>${cell}</td>`).join('')}
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `);
+    previewWindow.document.close();
   };
 
   const menuData = [
@@ -58,7 +147,7 @@ const Header = () => {
           subItems: ["Import from JSON", "Import from CSV", "Import as COCO"]
         },
         "divider",
-        "Preview Annotation"
+        "Preview Annotation"  // Add the Preview Annotation item
       ]
     },
     {
@@ -92,7 +181,7 @@ const Header = () => {
                     if (item === "divider") return <hr key={idx} />;
                     if (typeof item === "string") {
                       return (
-                        <li key={idx} onClick={item === "View Deleted Images" ? openDeletedModal : null}>
+                        <li key={idx} onClick={item === "Preview Annotation" ? handlePreviewAnnotation : openDeletedModal}>
                           {item}
                         </li>
                       );
@@ -117,7 +206,6 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Modal for Deleted Images */}
       {showDeletedModal && (
         <div className="deleted-modal-overlay">
           <div className="deleted-modal">
@@ -137,6 +225,6 @@ const Header = () => {
       )}
     </>
   );
-};
+});
 
 export default Header;

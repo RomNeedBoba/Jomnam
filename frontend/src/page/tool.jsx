@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Popup from '../components/popup/database/database'; 
 import Header from "../components/ToolPage/Menu/Menu";
 import AnnotationBody from "../components/ToolPage/AnnotationBody/AnnotationBody";
@@ -11,6 +11,8 @@ const Tool = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [toast, setToast] = useState(null); 
 
+  const headerRef = useRef();
+
   useEffect(() => {
     setShowPopup(true);
   }, []);
@@ -19,6 +21,14 @@ const Tool = () => {
 
   const handleAddImages = (fileList) => {
     const imageFiles = fileList.filter(file => file.type.startsWith("image/"));
+
+    if (imageFiles.length > 0) {
+      const folderPath = imageFiles[0].webkitRelativePath || "";
+      const folderName = folderPath.split("/")[0];
+      if (folderName && headerRef.current) {
+        headerRef.current.updateTitleFromFolder(folderName);
+      }
+    }
 
     const newImages = imageFiles.map(file => ({
       name: file.webkitRelativePath || file.name,
@@ -64,7 +74,7 @@ const Tool = () => {
 
   return (
     <div className="app">
-      <Header />
+      <Header ref={headerRef} />
       {showPopup && <Popup closePopup={closePopup} onAddImages={handleAddImages} />}
 
       {toast && (
