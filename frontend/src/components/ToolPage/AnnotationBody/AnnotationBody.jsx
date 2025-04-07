@@ -1,109 +1,97 @@
-import React, { useState, useRef } from 'react';
-import ImageSelector from './ImageSelector';
-import ClassManager from './ClassManager';
-import RegionToolbar from './tool';
-import RectangleDrawer from './RectangleDrawer';
-import PolygonDrawer from './PolygonDrawer';
-import RegionList from './RegionList';
+import React, { useState, useEffect } from 'react';
+import ImageSelector from '../AnnotationBody/Image/ImageSelector';
+import ClassManager from '../AnnotationBody/Class/Class';
+import RegionToolbar from '../AnnotationBody/Tool/Tool';
+import RectangleDrawer from '../AnnotationBody/Tool/Shapes/Rect';
+import PolygonDrawer from '../AnnotationBody/Tool/Shapes/Polygon';
+import useImageTransform from '../../../hook/useImageTransform';
+import { removeImageFromAnnotations, ensureImageInAnnotations } from '../../../utils/annotationStorage';
+import { addDeletedImage } from '../../../utils/deletedImages';
+
 import './AnnotationBody.css';
 
-const AnnotationBody = ({
-  images,
-  selectedImage,
-  onSelectImage,
-  onAddImages,
-  onDeleteImage,
-}) => {
+const AnnotationBody = ({ images, selectedImage, onSelectImage, onAddImages, onDeleteImage }) => {
   const [crosshair, setCrosshair] = useState({ x: 0, y: 0, visible: false });
-  const [zoom, setZoom] = useState(1);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [dragging, setDragging] = useState(false);
-  const [dragStart, setDragStart] = useState(null);
-  const [activeTool, setActiveTool] = useState(null);  // Tool to draw (rectangle, polygon)
+  const [activeTool, setActiveTool] = useState(null);
   const [selectedClass, setSelectedClass] = useState(null);
-  const [regions, setRegions] = useState({});  // Stores regions per image file (imageName -> regions)
+  const [regions, setRegions] = useState({});
 
-  const imageRef = useRef(null);
+  const {
+    zoom,
+    offset,
+    imageRef,
+    handleWheel,
+    handleMouseDown,
+    handleMouseUp,
+    handlePan,
+    dragging,
+  } = useImageTransform(activeTool);
 
-  // Helper function to get the regions for the current selected image
-  const getRegionsForCurrentImage = () => {
-    return regions[selectedImage?.name] || [];
-  };
+  // ✅ Sync each image with annotationsPreview (only adds if missing)
+  useEffect(() => {
+    if (selectedImage && !images.some(img => img.name === selectedImage.name)) {
+      onSelectImage(null);
+    }
+
+    images.forEach(img => {
+      ensureImageInAnnotations(img.name, img.fileSize || 0); // <-- fileSize must come from Tool.jsx
+    });
+  }, [images, selectedImage, onSelectImage]);
 
   const handleMouseMove = (e) => {
     const bounds = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - bounds.left;
     const y = e.clientY - bounds.top;
     setCrosshair({ x, y, visible: true });
-    handlePan(e);
+    if (activeTool === 'hand') handlePan(e);
   };
 
   const handleMouseLeave = () => {
-    setCrosshair((prev) => ({ ...prev, visible: false }));
-    setDragging(false);
-  };
-
-  const handleWheel = (e) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? -0.1 : 0.1;
-    setZoom((prev) => Math.min(3, Math.max(0.2, prev + delta)));
-  };
-
-  const handleMouseDown = (e) => {
-    if (activeTool === 'hand') {
-      setDragging(true);
-      setDragStart({ x: e.clientX, y: e.clientY });
-    }
-  };
-
-  const handleMouseUp = () => {
-    setDragging(false);
-    setDragStart(null);
-  };
-
-  const handlePan = (e) => {
-    if (dragging && dragStart) {
-      const dx = e.clientX - dragStart.x;
-      const dy = e.clientY - dragStart.y;
-      setOffset((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
-      setDragStart({ x: e.clientX, y: e.clientY });
-    }
+    setCrosshair(prev => ({ ...prev, visible: false }));
   };
 
   const handleToolSelect = (tool) => {
     setActiveTool(tool);
   };
 
-  // Add region logic
-  const handleAddRegion = (vggFormatText) => {
-    if (!selectedClass) {
-      alert("Please select a class before labeling.");
+  const handleAddRegion = (vgg) => {
+    if (!selectedClass || !selectedImage) {
+      alert("Select both image and class.");
       return;
     }
 
     const newRegion = {
-      region_id: Date.now(),  // Unique ID for each region
-      shape_attributes: vggFormatText.shape_attributes,
+      region_id: Date.now(),
+      shape_attributes: vgg.shape_attributes,
       region_attributes: {
         class: selectedClass,
-        description: vggFormatText.description || '',
+        description: vgg.description || '',
       },
-      imageName: selectedImage.name,  // Store regions by image name
+      imageName: selectedImage.name,
     };
 
-    // Update regions for this specific image
-    setRegions((prev) => {
-      const imageRegions = prev[selectedImage.name] || [];
-      return {
-        ...prev,
-        [selectedImage.name]: [...imageRegions, newRegion],
-      };
-    });
+    setRegions(prev => ({
+      ...prev,
+      [selectedImage.name]: [...(prev[selectedImage.name] || []), newRegion],
+    }));
 
     console.log("💾 Region added:", newRegion);
   };
 
-  const getCursorClass = () => {
+  const handleDeleteImage = () => {
+    if (selectedImage) {
+      const filename = selectedImage.name;
+
+      removeImageFromAnnotations(filename);     // ✅ Remove from annotationsPreview
+      addDeletedImage(filename);                // ✅ Add to Deleted Images
+      onDeleteImage(selectedImage);             // ✅ Remove from React state
+
+      const remaining = images.filter(img => img.name !== filename);
+      onSelectImage(remaining.length > 0 ? remaining[0] : null);
+    }
+  };
+
+  const getCursor = () => {
     if (activeTool === 'hand') return dragging ? 'grabbing' : 'grab';
     if (activeTool === 'rect') return 'cursor-rect';
     if (activeTool === 'polygon') return 'cursor-polygon';
@@ -128,68 +116,55 @@ const AnnotationBody = ({
 
       <div className="workspace-section">
         {selectedImage && (
-          <>
+          <div
+            className={`image-display-container ${getCursor()}`}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            onMouseDown={activeTool === 'hand' ? handleMouseDown : null}
+            onMouseUp={activeTool === 'hand' ? handleMouseUp : null}
+            onWheel={handleWheel}
+          >
+            {crosshair.visible && (
+              <>
+                <div className="crosshair-line" style={{ left: `${crosshair.x}px` }} />
+                <div className="crosshair-line" style={{ top: `${crosshair.y}px` }} />
+              </>
+            )}
             <div
-              className={`image-display-container ${getCursorClass()}`}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              onMouseDown={handleMouseDown}
-              onMouseUp={handleMouseUp}
-              onWheel={handleWheel}
+              className="image-zoom-wrapper"
+              ref={imageRef}
+              style={{
+                transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
+                transition: dragging ? 'none' : 'transform 0.1s ease-out',
+              }}
             >
-              {crosshair.visible && (
-                <>
-                  <div className="crosshair-line vertical" style={{ left: `${crosshair.x}px` }} />
-                  <div className="crosshair-line horizontal" style={{ top: `${crosshair.y}px` }} />
-                </>
-              )}
-              <div
-                className="image-zoom-wrapper"
-                ref={imageRef}
-                style={{
-                  transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
-                  transition: dragging ? 'none' : 'transform 0.1s ease-out',
-                }}
-              >
-                <img
-                  src={selectedImage.url}
-                  alt={selectedImage.name}
-                  className="annotation-image"
-                  draggable={false}
+              <img
+                src={selectedImage.url}
+                alt={selectedImage.name}
+                className="annotation-image"
+                draggable={false}
+              />
+              {activeTool === 'rect' && (
+                <RectangleDrawer
+                  imageRef={imageRef}
+                  onAddRegion={handleAddRegion}
+                  activeTool={activeTool}
                 />
-
-                {/* Rectangle and Polygon Drawers */}
-                {activeTool === 'rect' && (
-                  <RectangleDrawer
-                    imageRef={imageRef}
-                    onAddRegion={handleAddRegion}
-                    activeTool={activeTool}
-                  />
-                )}
-
-                {activeTool === 'polygon' && (
-                  <PolygonDrawer
-                    imageRef={imageRef}
-                    onAddRegion={handleAddRegion}
-                    activeTool={activeTool}
-                  />
-                )}
-              </div>
+              )}
+              {activeTool === 'polygon' && (
+                <PolygonDrawer
+                  imageRef={imageRef}
+                  onAddRegion={handleAddRegion}
+                  activeTool={activeTool}
+                />
+              )}
             </div>
-
-            <RegionList
-              regions={getRegionsForCurrentImage()}
-              currentImage={selectedImage}
-              selectedClass={selectedClass}
-              onSelectClass={setSelectedClass}
-            />
-          </>
+          </div>
         )}
-
         <RegionToolbar
           activeTool={activeTool}
           onSelectShape={handleToolSelect}
-          onDeleteImage={onDeleteImage}
+          onDeleteImage={handleDeleteImage}
           onDetect={() => alert('Auto annotation coming soon')}
         />
       </div>

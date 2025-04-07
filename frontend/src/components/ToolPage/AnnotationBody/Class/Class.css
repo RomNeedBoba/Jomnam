@@ -1,0 +1,133 @@
+.class-manager {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    /* Removed rounding to connect flush */
+    font-family: Arial, sans-serif;
+    position: relative;
+    top: -260px;
+}
+
+/* Header styling: flush with container edges */
+.class-header {
+    width: 100%;
+    margin: 0;
+    /* Remove any default margins */
+    padding: 10px;
+    /* Use padding as needed, but it will be inside the container */
+    background-color: #1E3E62;
+    color: white;
+    box-sizing: border-box;
+}
+
+.class-header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Class list styling */
+.class-list {
+    padding: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+    /* Light background for better contrast */
+}
+
+.class-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    /* White background for items */
+    color: #333;
+    /* Dark text for readability */
+}
+
+.class-item:last-child {
+    border-bottom: none;
+}
+
+.class-item-placeholder {
+    color: #666;
+    /* Slightly darker placeholder text for visibility */
+    text-align: center;
+    padding: 8px;
+}
+
+/* Action buttons */
+.action-buttons {
+    padding: 8px;
+    display: flex;
+    gap: 10px;
+}
+
+.add-button,
+.modify-button {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.add-button {
+    background-color: #1E3E62;
+    /* Dark blue background */
+    color: white;
+    /* White text for contrast */
+}
+
+.modify-button {
+    background-color: #f0f0f0;
+    /* Light gray background */
+    color: #333;
+    /* Dark text for readability */
+}
+
+/* Toast messages */
+.toast-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+.toast-message.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.toast-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.image-selector-box,
+.class-manager-box {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.tool-section {
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 6px;
+}

@@ -1,17 +1,26 @@
-const DELETED_KEY = "deletedImages"; // Unified Key
+// utils/deletedImages.js
+const DELETED_KEY = 'deletedImages';
 
-export const saveDeletedImage = (filename) => {
-  const existing = JSON.parse(localStorage.getItem(DELETED_KEY) || "[]");
-  if (!existing.includes(filename)) {
-    existing.push(filename);
-    localStorage.setItem(DELETED_KEY, JSON.stringify(existing));
+export function getDeletedImages() {
+  try {
+    const raw = localStorage.getItem(DELETED_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.error('❌ Failed to get deleted images:', err);
+    return [];
   }
-};
+}
 
-export const getDeletedImages = () => {
-  return JSON.parse(localStorage.getItem(DELETED_KEY) || "[]");
-};
+export function addDeletedImage(filename) {
+  try {
+    const current = getDeletedImages();
+    const updated = [...new Set([...current, filename])];
+    localStorage.setItem(DELETED_KEY, JSON.stringify(updated));
+  } catch (err) {
+    console.error('❌ Failed to save deleted image:', err);
+  }
+}
 
-export const clearDeletedImages = () => {
+export function clearDeletedImages() {
   localStorage.removeItem(DELETED_KEY);
-};
+}

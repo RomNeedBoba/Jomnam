@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Popup from '../components/popup/database/database'; 
 import Header from "../components/ToolPage/Menu/Menu";
 import AnnotationBody from "../components/ToolPage/AnnotationBody/AnnotationBody";
-import { saveDeletedImage } from '../utils/deletedImages';
+import { addDeletedImage } from '../utils/deletedImages';
+import { removeImageFromAnnotations, ensureImageInAnnotations } from '../utils/annotationStorage';
 import '../styles/ToolPage.css';
 
 const Tool = () => {
@@ -10,10 +11,12 @@ const Tool = () => {
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [toast, setToast] = useState(null); 
-
   const headerRef = useRef();
 
   useEffect(() => {
+    localStorage.removeItem('projectTitle');
+    localStorage.removeItem('deletedImages');
+    localStorage.removeItem('annotationsPreview');
     setShowPopup(true);
   }, []);
 
@@ -30,45 +33,54 @@ const Tool = () => {
       }
     }
 
-    const newImages = imageFiles.map(file => ({
-      name: file.webkitRelativePath || file.name,
-      url: URL.createObjectURL(file),
-      annotated: false,
-    }));
-
-    setImages(prev => {
-      const existingNames = new Set(prev.map(img => img.name));
-      const combined = [...prev];
-      newImages.forEach(img => {
-        if (!existingNames.has(img.name)) {
-          combined.push(img);
-        }
+    Promise.all(imageFiles.map((file, index) => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          resolve({
+            name: file.webkitRelativePath || file.name,
+            file_id: `file${index + 1}`,
+            fileSize: file.size || 0,
+            url: reader.result,
+            annotated: false
+          });
+        };
+        reader.readAsDataURL(file);
       });
-      return combined;
+    })).then((newImages) => {
+      setImages(prev => {
+        const existingNames = new Set(prev.map(img => img.name));
+        const combined = [...prev];
+        newImages.forEach(img => {
+          if (!existingNames.has(img.name)) {
+            combined.push(img);
+            ensureImageInAnnotations(img.file_id, img.name, img.fileSize); // 🔁 Sync to annotationsPreview
+          }
+        });
+        return combined;
+      });
     });
   };
 
-  const handleSelectImage = (image) => {
-    setSelectedImage(image);
-  };
+  const handleSelectImage = (image) => setSelectedImage(image);
 
   const handleDeleteCurrentImage = () => {
     if (!selectedImage) return;
 
-    saveDeletedImage(selectedImage.name);
-    showToast("⚠️ Image removed from browser. Your local file is not deleted.");
+    const { name } = selectedImage;
+    addDeletedImage(name);
+    removeImageFromAnnotations(name);
 
     setImages(prevImages => {
-      const updatedImages = prevImages.filter(img => img.url !== selectedImage.url);
-      const newSelected =
-        updatedImages.length > 0 ? updatedImages[Math.min(prevImages.findIndex(img => img.url === selectedImage.url), updatedImages.length - 1)] : null;
+      const updated = prevImages.filter(img => img.name !== name);
+      const newSelected = updated.length > 0
+        ? updated[Math.min(prevImages.findIndex(img => img.name === name), updated.length - 1)]
+        : null;
       setSelectedImage(newSelected);
-      return updatedImages;
+      return updated;
     });
-  };
 
-  const showToast = (message) => {
-    setToast(message);
+    setToast("⚠️ Image removed from browser. Your local file is not deleted.");
     setTimeout(() => setToast(null), 8000);
   };
 
@@ -76,13 +88,7 @@ const Tool = () => {
     <div className="app">
       <Header ref={headerRef} />
       {showPopup && <Popup closePopup={closePopup} onAddImages={handleAddImages} />}
-
-      {toast && (
-        <div className="warning-toast">
-          {toast}
-        </div>
-      )}
-
+      {toast && <div className="warning-toast">{toast}</div>}
       <AnnotationBody
         images={images}
         selectedImage={selectedImage}

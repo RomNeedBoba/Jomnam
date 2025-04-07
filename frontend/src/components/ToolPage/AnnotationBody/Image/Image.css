@@ -1,0 +1,124 @@
+
+.image-selector-box {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    color: black;
+  }
+  
+  .panel-title {
+    background-color: #1E3E62;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: left;
+    margin-bottom: 8px;
+  }
+  
+  .filter-tools {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  
+  .filter-tools select,
+  .filter-tools input {
+    width: 50%;
+    padding: 6px;
+    font-size: 14px;
+  }
+  
+  .image-file-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 6px;
+    background: white;
+    font-size: 14px;
+    max-height: 400px;
+  }
+  
+  .image-file-item {
+    padding: 6px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .image-file-item:hover {
+    background-color: #e7f1ff;
+  }
+  
+  .add-files-button {
+    margin-top: 10px;
+  }
+  
+  .add-files-button button {
+    width: 100%;
+    padding: 8px;
+    background-color: #1E3E62;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .popup-success {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    z-index: 999;
+    padding: 14px 20px;
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    animation: fadeInOut 3s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    max-width: 280px;
+    pointer-events: none;
+  }
+  
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    10% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+  
+  .project-header {
+    padding: 12px 10px 6px 10px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .project-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    color: #1E3E62;
+  }
+
+  
+  .file-label {
+    font-weight: 500;
+    color: #1E3E62;
+    margin-right: 6px;
+  }
+  
+

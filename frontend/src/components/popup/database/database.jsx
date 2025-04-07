@@ -5,8 +5,6 @@ import './db.css';
 const Popup = ({ closePopup, onAddImages }) => {
   const [popupVisible, setPopupVisible] = useState(true);
   const [showGoogleDrive, setShowGoogleDrive] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastText, setToastText] = useState('');
 
   useEffect(() => {
     const wrapper = document.getElementById('content-wrapper');
@@ -55,13 +53,13 @@ const Popup = ({ closePopup, onAddImages }) => {
           try {
             const parsed = JSON.parse(reader.result);
             console.log("📄 Found existing JSON:", parsed);
+            localStorage.setItem('annotationsPreview', JSON.stringify(parsed, null, 2));
           } catch (err) {
             console.error("❌ Invalid JSON:", err);
           }
         };
         reader.readAsText(jsonFile);
       } else {
-        // Auto-generate and trigger download
         const newJSON = {
           project: folderName,
           version: "via-2.0.10",
@@ -78,19 +76,6 @@ const Popup = ({ closePopup, onAddImages }) => {
             size: file.size
           };
         });
-        if (jsonFile) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            try {
-              const parsed = JSON.parse(reader.result);
-              console.log("✅ Loaded existing annotation JSON:", parsed);
-              localStorage.setItem('annotationsPreview', JSON.stringify(parsed, null, 2)); // <== Store here
-            } catch (e) {
-              console.error("❌ Failed to parse JSON:", e);
-            }
-          };
-          reader.readAsText(jsonFile);
-        }
 
         console.log("🆕 No JSON found. Created JSON:", newJSON);
         downloadJSON(newJSON, `${folderName}_annotations.json`);
@@ -98,12 +83,7 @@ const Popup = ({ closePopup, onAddImages }) => {
 
       if (imageFiles.length > 0) {
         onAddImages(imageFiles);
-        setToastText(`✅ ${imageFiles.length} image(s) loaded`);
-        setShowToast(true);
-        setTimeout(() => {
-          setShowToast(false);
-          closeLocalPopup();
-        }, 800);
+        closeLocalPopup(); // close the popup immediately after loading
       }
     };
 
@@ -113,8 +93,6 @@ const Popup = ({ closePopup, onAddImages }) => {
   return (
     <>
       <div id="content-wrapper"></div>
-
-      {showToast && <div className="popup-success">{toastText}</div>}
 
       {popupVisible && !showGoogleDrive && (
         <div className="popup-overlay">

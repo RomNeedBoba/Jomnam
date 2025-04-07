@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import './RegionToolbar.css';
+import './Tool.css';
 
 const RegionToolbar = ({ activeTool, onSelectShape, onDetect, onDeleteImage }) => {
   const getButtonClass = (toolName, isDelete = false) => {
