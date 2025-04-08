@@ -1,146 +1,118 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
-const ImagePolygonDrawer = ({ imageRef, imageId, onSaveRegion }) => {
-  // Points for the current (in-progress) polygon
-  const [points, setPoints] = useState([]);
-  // Current mouse position for live preview (line from last point to cursor)
-  const [preview, setPreview] = useState(null);
-  // Array of finalized regions (each with points, description, and class)
-  const [regions, setRegions] = useState([]);
+const Polygon = ({ polygon, isSelected, setSelectedId, updateRegion, setInteracting }) => {
+    const [dragging, setDragging] = useState(false);
+    const [dragOffset, setDragOffset] = useState(null);
+    const [resizingIndex, setResizingIndex] = useState(null);
+    const containerRef = useRef();
 
-  // A ref to focus the container so that it can capture key events (like Enter)
-  const containerRef = useRef(null);
+    const getCursorStyle = (index) => {
+        return 'nwse-resize';
+    };
 
-  // Auto-focus when the component mounts
-  useEffect(() => {
-    containerRef.current && containerRef.current.focus();
-  }, []);
+    const handleMouseDown = (e) => {
+        if (!isSelected) return;
+        const svgRect = containerRef.current.getBoundingClientRect();
+        const x = e.clientX - svgRect.left;
+        const y = e.clientY - svgRect.top;
+        setInteracting(true);
 
-  // Add a new point on click using imageRef for relative coordinates
-  const handleClick = (e) => {
-    if (!imageRef.current) return;
-    const rect = imageRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setPoints(prev => [...prev, { x, y }]);
-    // Reset the preview since a new point has been added
-    setPreview(null);
-  };
+        // If clicked near a point, start resizing
+        const radius = 6;
+        for (let i = 0; i < polygon.points.length; i++) {
+            const point = polygon.points[i];
+            if (Math.abs(point.x - x) < radius && Math.abs(point.y - y) < radius) {
+                setResizingIndex(i);
+                return;
+            }
+        }
 
-  // Update preview on mouse movement
-  const handleMouseMove = (e) => {
-    if (!imageRef.current) return;
-    const rect = imageRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setPreview({ x, y });
-  };
+        // Otherwise, drag whole polygon
+        setDragging(true);
+        setDragOffset({ x, y });
+    };
 
-  // Finalize the polygon on Enter key press
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && points.length > 2) {
-      // Use prompt dialogs to gather additional data
-      let description = window.prompt("Enter description for this region:", "");
-      let regionClass = window.prompt("Enter class label for this region:", "");
+    const handleMouseMove = (e) => {
+        if (!isSelected || (!dragging && resizingIndex === null)) return;
+        const svgRect = containerRef.current.getBoundingClientRect();
+        const x = e.clientX - svgRect.left;
+        const y = e.clientY - svgRect.top;
 
-      // Set default values if inputs are empty or canceled
-      description = description && description.trim() !== "" ? description : "No description";
-      regionClass = regionClass && regionClass.trim() !== "" ? regionClass : "unclassified";
+        if (resizingIndex !== null) {
+            const newPoints = [...polygon.points];
+            newPoints[resizingIndex] = { x, y };
+            updateRegion(polygon.id, prev => ({ ...prev, points: newPoints }));
+        } else if (dragging && dragOffset) {
+            const dx = x - dragOffset.x;
+            const dy = y - dragOffset.y;
+            const movedPoints = polygon.points.map(p => ({
+                x: p.x + dx,
+                y: p.y + dy,
+            }));
+            updateRegion(polygon.id, prev => ({ ...prev, points: movedPoints }));
+            setDragOffset({ x, y });
+        }
+    };
 
-      const newRegion = {
-        imageId,     // Associate with the specific image
-        points,      // Save the x/y coordinates for this region
-        description, // User-provided description (or default)
-        regionClass, // User-provided class label (or default)
-      };
+    const handleMouseUp = () => {
+        setDragging(false);
+        setResizingIndex(null);
+        setInteracting(false);
+    };
 
-      // Add the finished region to our regions state, so it stays visible
-      setRegions(prev => [...prev, newRegion]);
-      // Optionally, pass the region back to a parent component
-      onSaveRegion && onSaveRegion(newRegion);
-
-      // Save regions in localStorage keyed by the image ID for persistence
-      const storedRegions = JSON.parse(localStorage.getItem('regions') || '{}');
-      storedRegions[imageId] = storedRegions[imageId]
-        ? [...storedRegions[imageId], newRegion]
-        : [newRegion];
-      localStorage.setItem('regions', JSON.stringify(storedRegions));
-
-      // Clear the current polygon (points and preview) for a new drawing
-      setPoints([]);
-      setPreview(null);
-    }
-  };
-
-  // Render the in-progress polygon (using a polyline)
-  const renderPolygon = () => {
-    if (points.length === 0) return null;
-    // Build a space-separated string of coordinate pairs
-    const pointString = points.map(p => `${p.x},${p.y}`).join(' ');
-    // If a preview point exists, append it so the line follows the cursor
-    const previewString = preview ? `${pointString} ${preview.x},${preview.y}` : pointString;
-    return (
-      <svg style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', width: '100%', height: '100%' }}>
-        {points.length > 1 && (
-          <polyline points={previewString} fill="none" stroke="red" strokeWidth="2" />
-        )}
-      </svg>
-    );
-  };
-
-  // Render the vertices of the current polygon as small dots
-  const renderPoints = () => {
-    return points.map((p, index) => (
-      <div
-        key={index}
-        style={{
-          position: 'absolute',
-          left: p.x - 4,
-          top: p.y - 4,
-          width: 8,
-          height: 8,
-          borderRadius: '50%',
-          backgroundColor: 'white',
-          border: '2px solid red'
-        }}
-      />
-    ));
-  };
-
-  // Render all finalized regions (persisted polygons) on the image
-  const renderRegions = () => {
-    return regions.map((region, idx) => {
-      const pts = region.points.map(p => `${p.x},${p.y}`).join(' ');
-      return (
-        <svg key={idx} style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', width: '100%', height: '100%' }}>
-          <polygon points={pts} fill="rgba(0,255,0,0.2)" stroke="green" strokeWidth="2" />
-        </svg>
-      );
+    useEffect(() => {
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
     });
-  };
 
-  return (
-    <div
-      ref={containerRef}
-      tabIndex={0}  // Makes the div focusable to capture key events (like Enter)
-      onClick={handleClick}
-      onMouseMove={handleMouseMove}
-      onKeyDown={handleKeyDown}
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 10,
-        cursor: 'crosshair'
-      }}
-    >
-      {renderRegions()}
-      {renderPolygon()}
-      {renderPoints()}
-    </div>
-  );
+    const pointsStr = polygon.points.map(p => `${p.x},${p.y}`).join(" ");
+
+    return (
+        <svg
+            ref={containerRef}
+            style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', width: '100%', height: '100%', zIndex: 10 }}
+        >
+            <polygon
+                points={pointsStr}
+                fill="rgba(0, 255, 0, 0.1)"
+                stroke="green"
+                strokeWidth={2}
+                style={{ pointerEvents: 'auto', cursor: 'move' }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedId(polygon.id);
+                }}
+                onMouseDown={handleMouseDown}
+            />
+
+            {isSelected &&
+                polygon.points.map((p, i) => (
+                    <circle
+                        key={i}
+                        cx={p.x}
+                        cy={p.y}
+                        r={6}
+                        fill="white"
+                        stroke="red"
+                        strokeWidth="2"
+                        style={{
+                            cursor: getCursorStyle(i),
+                            pointerEvents: 'auto',
+                        }}
+                        onMouseDown={(e) => {
+                            e.stopPropagation();
+                            setSelectedId(polygon.id);
+                            setResizingIndex(i);
+                            setInteracting(true);
+                        }}
+                    />
+                ))}
+        </svg>
+    );
 };
 
-export default ImagePolygonDrawer;
+export default Polygon;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Class.css';
 
 const trashIcon = (
@@ -7,30 +7,28 @@ const trashIcon = (
   </svg>
 );
 
-const ClassManager = ({ regions, onRegionSelect }) => {
+const ClassManager = ({ onSelectClass, onClassListUpdate }) => {
   const [classes, setClasses] = useState([]);
+  const [selectedClassIndex, setSelectedClassIndex] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showModifyModal, setShowModifyModal] = useState(false);
   const [newClassInput, setNewClassInput] = useState('');
   const [toast, setToast] = useState({ visible: false, message: '', type: '' });
-  const [selectedRegion, setSelectedRegion] = useState(null);  // New state for selected region
+
+  // Sync external parent state
+  useEffect(() => {
+    if (onClassListUpdate) {
+      onClassListUpdate(classes);
+    }
+  }, [classes]);
 
   const openAddModal = () => {
     setNewClassInput('');
     setShowAddModal(true);
   };
 
-  const closeAddModal = () => {
-    setShowAddModal(false);
-  };
-
-  const openModifyModal = () => {
-    if (classes.length > 0) setShowModifyModal(true);
-  };
-
-  const closeModifyModal = () => {
-    setShowModifyModal(false);
-  };
+  const closeAddModal = () => setShowAddModal(false);
+  const closeModifyModal = () => setShowModifyModal(false);
 
   const showToastMessage = (message, type) => {
     setToast({ visible: true, message, type });
@@ -39,47 +37,43 @@ const ClassManager = ({ regions, onRegionSelect }) => {
 
   const addNewClass = () => {
     const trimmed = newClassInput.trim();
-    if (!trimmed) {
-      showToastMessage('Class name cannot be empty.', 'error');
-      return;
-    }
+    if (!trimmed) return showToastMessage('Class name cannot be empty.', 'error');
+
     const exists = classes.some(cls => cls.name.toLowerCase() === trimmed.toLowerCase());
-    if (exists) {
-      showToastMessage('Duplicate class name.', 'error');
-      return;
-    }
-    setClasses(prev => [...prev, { name: trimmed, count: prev.length + 1 }]);
-    showToastMessage('Class added successfully!', 'success');
+    if (exists) return showToastMessage('Duplicate class name.', 'error');
+
+    const newList = [...classes, { name: trimmed, count: classes.length + 1 }];
+    setClasses(newList);
     setShowAddModal(false);
+    showToastMessage('Class added successfully!', 'success');
   };
 
   const handleRemoveClass = (index) => {
-    const updatedClasses = classes.filter((_, i) => i !== index).map((cls, i) => ({
+    const updated = classes.filter((_, i) => i !== index).map((cls, i) => ({
       ...cls,
-      count: i + 1, // Re-index numbers
+      count: i + 1,
     }));
-    setClasses(updatedClasses);
+    setClasses(updated);
+    setSelectedClassIndex(null);
+    onSelectClass(null);
     showToastMessage('Class removed successfully!', 'success');
-
-    // If no classes left, close the modify modal
-    if (updatedClasses.length === 0) closeModifyModal();
+    if (updated.length === 0) closeModifyModal();
   };
 
   const handleEditClass = (index, newName) => {
-    const updatedClasses = [...classes];
-    updatedClasses[index].name = newName;
-    setClasses(updatedClasses);
+    const updated = [...classes];
+    updated[index].name = newName;
+    setClasses(updated);
   };
 
   const handleSaveChanges = () => {
-    setClasses(classes);
     showToastMessage('Changes saved successfully!', 'success');
     closeModifyModal();
   };
 
-  const handleRegionClick = (region) => {
-    setSelectedRegion(region);  // Set the selected region
-    onRegionSelect(region);  // Pass selected region data back to parent (if needed)
+  const handleClassClick = (index) => {
+    setSelectedClassIndex(index);
+    onSelectClass(classes[index].name);
   };
 
   return (
@@ -94,10 +88,15 @@ const ClassManager = ({ regions, onRegionSelect }) => {
             <span className="class-name">Add Your New Class</span>
           </div>
         ) : (
-          classes.map((cls) => (
-            <div key={cls.count} className="class-item">
+          classes.map((cls, i) => (
+            <div
+              key={cls.count}
+              className={`class-item ${i === selectedClassIndex ? 'selected' : ''}`}
+              onClick={() => handleClassClick(i)}
+              title="Click to select this class"
+            >
               <span className="class-name">{cls.name}</span>
-              <span className="class-details">{cls.count}</span>
+              <span className="class-details">#{cls.count}</span>
             </div>
           ))
         )}
@@ -105,7 +104,7 @@ const ClassManager = ({ regions, onRegionSelect }) => {
 
       <div className="action-buttons">
         <button className="add-button" onClick={openAddModal}>Add</button>
-        <button className="modify-button" onClick={openModifyModal} disabled={classes.length === 0}>
+        <button className="modify-button" onClick={() => setShowModifyModal(true)} disabled={classes.length === 0}>
           Modify
         </button>
       </div>
@@ -118,7 +117,7 @@ const ClassManager = ({ regions, onRegionSelect }) => {
         <div className="modal-overlay">
           <div className="modal-content">
             <span className="modal-close" onClick={closeAddModal}>&times;</span>
-            <h3 style={{ color: 'black' }}>Create New Class</h3>
+            <h3>Create New Class</h3>
             <input
               type="text"
               className="modal-input"
@@ -137,10 +136,8 @@ const ClassManager = ({ regions, onRegionSelect }) => {
         <div className="modal-overlay">
           <div className="modal-content">
             <span className="modal-close" onClick={closeModifyModal}>&times;</span>
-            <h3 className="modal-title">Modify Classes</h3>
-            <p className="modal-description">
-              Update or delete class labels. This action cannot be undone.
-            </p>
+            <h3>Modify Classes</h3>
+            <p>Update or delete class labels.</p>
             <div className="modal-divider" />
             <div className="modify-class-list">
               {classes.map((cls, i) => (
@@ -151,10 +148,7 @@ const ClassManager = ({ regions, onRegionSelect }) => {
                     value={cls.name}
                     onChange={(e) => handleEditClass(i, e.target.value)}
                   />
-                  <button
-                    className="delete-button"
-                    onClick={() => handleRemoveClass(i)}
-                  >
+                  <button className="delete-button" onClick={() => handleRemoveClass(i)}>
                     {trashIcon}
                   </button>
                 </div>
@@ -164,15 +158,6 @@ const ClassManager = ({ regions, onRegionSelect }) => {
               <button className="save-button" onClick={handleSaveChanges}>Save Changes</button>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Display selected region's data */}
-      {selectedRegion && (
-        <div className="selected-region">
-          <h3>Selected Region: {selectedRegion.name}</h3>
-          <p>Shape: {selectedRegion.shape}</p>
-          <p>Coordinates: {JSON.stringify(selectedRegion.coordinates)}</p>
         </div>
       )}
     </div>

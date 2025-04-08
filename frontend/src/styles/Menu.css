@@ -1,0 +1,222 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: #1E3E62;
+    color: #FDFAF6;
+    padding: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  
+  .logo {
+    margin-right: auto;
+    margin-left: -60px;
+    margin-bottom: 20px;
+  }
+  
+  .logo img {
+    width: 50px;
+    height: 40px;
+  }
+  
+  .title-menu-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 20px;
+    flex: 1;
+  }
+  
+  .title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+  
+  .menu {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .menu-item {
+    position: relative;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 0.3s;
+  }
+  
+  .menu-item:hover {
+    background: #2A4D75;
+    display: block;
+  }
+  
+  .dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #223A5E;
+    list-style: none;
+    border: 1px solid #1A2F4D;
+    width: 200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+    z-index: 1;
+    border-radius: 6px;
+    animation: fadeIn 0.2s ease-out;
+  }
+  
+  .menu-item:hover .dropdown {
+    display: block;
+  }
+  
+  .dropdown li {
+    padding: 10px 15px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.3s;
+    color: #FDFAF6;
+  }
+  
+  .dropdown li:hover {
+    background: #1D2F4C;
+  }
+  
+  .dropdown hr {
+    border: none;
+    height: 1px;
+    background-color: #2F4F6D;
+    margin: 5px 0;
+  }
+  
+  /* ✅ Sticky Nested Dropdown Fix */
+  .nested-dropdown {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background-color: #1D2F4C;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 6px;
+    border: 1px solid #1A2F4D;
+    transform: translateX(5px);
+    z-index: 2;
+    transition: opacity 0.2s ease;
+  }
+  
+  .dropdown li:hover,
+  .dropdown li:hover .nested-dropdown,
+  .nested-dropdown:hover {
+    display: block;
+  }
+  
+  .dropdown li:hover .nested-dropdown {
+    display: block;
+  }
+  
+  .nested-dropdown li {
+    padding: 10px 15px;
+    white-space: nowrap;
+    transition: background 0.3s;
+    color: #FDFAF6;
+  }
+  
+  .nested-dropdown li:hover {
+    background-color: #13283E;
+  }
+  
+  /* Chevron styles */
+  .chevron {
+    font-size: 0.8em;
+    margin-left: 6px;
+    float: right;
+    transition: transform 0.2s ease;
+  }
+  
+  .dropdown li:hover .chevron {
+    transform: rotate(90deg);
+  }
+  
+  /* Subtle fade-in for dropdowns */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Modal Styles */
+  .deleted-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 3000;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .deleted-modal {
+    background: #fff;
+    padding: 24px 28px;
+    border-radius: 10px;
+    width: 320px;
+    max-height: 400px;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }
+  
+  .deleted-modal h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #1E3E62;
+  }
+  
+  .deleted-list {
+    list-style: none;
+    padding-left: 0;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .deleted-list li {
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-size: 22px;
+    cursor: pointer;
+    color: black;
+  }
+  
