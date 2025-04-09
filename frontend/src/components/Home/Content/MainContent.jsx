@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Content.css';
 import main from '../../../assets/main.png';
-import myVideo from '../../../assets/s.mp4';
+import myVideo from '../../../assets/demo.mp4';
 import Header from '../Header/Header';
 import p1 from '../../../assets/p1.png';
 import p2 from '../../../assets/p2.png';
