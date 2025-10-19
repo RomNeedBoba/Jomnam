@@ -1,0 +1,26 @@
+.feature-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  
+  .feature-card h3 {
+    font-size: 1.1rem;
+    color: #222;
+    margin-top: 12px;
+  }
+  
+  .feature-card p {
+    color: #666;
+    font-size: 0.95rem;
+    margin-top: 6px;
+  }
+  
